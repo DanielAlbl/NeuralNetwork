@@ -1,14 +1,17 @@
 #pragma once
 #include "Net.h"
+#include "classifier.h"
+#include <climits>
 
 class Trainer {
-	Net* N;
+	Net& N;
 
 	vector<Matrix> X;
 	vector<Matrix> Y;
 
 	int dataPoints = 0;
 	int batchSize = 32;
+	int maxRows = INT_MAX;
 
 	int inDim;
 	int outDim;
@@ -22,5 +25,6 @@ public:
 	void readY(const char* file);
 
 	void train(int itr);
+	double test();
 };
 

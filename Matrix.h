@@ -3,8 +3,6 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <stdio.h>
-#include <omp.h>
 using namespace std;
 
 class Matrix {
@@ -30,6 +28,7 @@ public:
 
     double& operator()(int i, int j);
     Matrix& operator=(Matrix const& right);
+    bool operator==(Matrix const& right);
 
     friend Matrix operator*(Matrix& left, Matrix& right);
     friend Matrix operator+(Matrix& left, Matrix& right);

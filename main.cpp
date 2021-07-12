@@ -1,14 +1,17 @@
 #include "Trainer.h"
 
+const int X_DIM = 4, Y_DIM = 3;
+
 int main() {
-	vector<int> sizes = { 200,400,400,200 };
-	vector<double> v(200,1);
+	Classifier n({X_DIM,50,50,50,50,50,50,50,Y_DIM});
+	Trainer t(n);
 
-	Net n(sizes);
-	Matrix m(v);
+	t.readX("Data/xtrain.csv");
+	t.readY("Data/ytrain.csv");
 
-	n.forward(m);
-	n.backward(m);
-	 
+
+	t.train(100);
+	cout << t.test() << endl;
+
 	return 0;
 }

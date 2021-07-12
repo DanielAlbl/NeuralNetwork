@@ -11,7 +11,7 @@ Net::Net(const char* file) {
 	dW.reserve(N);
 	dB.reserve(N);
 
-	for(int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
 		V.emplace_back(Matrix(W[i].M, 1));
 		A.emplace_back(Matrix(W[i].N, 1));
 
@@ -19,7 +19,7 @@ Net::Net(const char* file) {
 		dB.emplace_back(Matrix(W[i].M, 1));
 	}
 
-	A.emplace_back(Matrix(W[N-1].M, 1));
+	A.emplace_back(Matrix(W[N - 1].M, 1));
 }
 
 Net::Net(vector<int> const& sizes) {
@@ -34,7 +34,7 @@ Net::Net(vector<int> const& sizes) {
 	dW.reserve(N);
 	dB.reserve(N);
 
-	for(int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
 		W.emplace_back(Matrix(sizes[i + 1], sizes[i]));
 		B.emplace_back(Matrix(sizes[i + 1], 1));
 
@@ -58,7 +58,7 @@ void Net::forward(Matrix& x) {
 	}
 }
 
-void Net::backward(Matrix & y) {
+void Net::backward(Matrix& y) {
 	Matrix::SUB(A[N], A[N], y);
 	Matrix::MUL(2, A[N]); // begin backprop with 2(A[N] - y)
 
@@ -95,7 +95,7 @@ int Net::getInDim() {
 }
 
 int Net::getOutDim() {
-	return W[N].M;
+	return W[N-1].M;
 }
 
 void Net::read(const char* file) {
@@ -118,6 +118,22 @@ void Net::write(const char* file) {
 		W[i].write(fout); fout << endl;
 		B[i].write(fout); fout << endl;
 	}
+}
+
+Matrix Net::predict(Matrix& x) {
+	int am;
+	double mx = -DBL_MAX;
+	Matrix m(A[N].M, 1);
+
+	forward(x);
+
+	for(int i = 0; i < A[N].M; i++)
+		if(A[N](i, 0) > mx)
+			mx = A[N](i, 0), am = i;
+
+	m(am, 0) = 1.0;
+	
+	return m;
 }
 
 void Net::init() {

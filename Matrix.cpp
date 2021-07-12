@@ -3,7 +3,7 @@
 Matrix::Matrix(int size) {
     init(size, size);
 
-    for (int i = 0; i < size; i++)
+    for(int i = 0; i < size; i++)
         elements[i][i] = 1.0;
 }
 
@@ -31,8 +31,7 @@ Matrix::Matrix(vector<vector<double>> const& v) {
 }
 
 void Matrix::init(int m, int n) {
-    M = m;
-    N = n;
+    M = m, N = n;
 
     elements.resize(M);
 
@@ -92,22 +91,23 @@ Matrix & Matrix::operator=(Matrix const& right) {
     return *this;
 }
 
+bool Matrix::operator==(Matrix const& right) {
+    return elements == right.elements;
+}
+
 void Matrix::ADD(Matrix & sum, Matrix & left, Matrix & right) {
-    #pragma omp parallel for
     for(int i = 0; i < sum.M; i++) 
         for(int j = 0; j < sum.N; j++) 
             sum(i, j) = left(i, j) + right(i, j);
 }
 
 void Matrix::SUB(Matrix & dif, Matrix & left, Matrix & right) {
-    #pragma omp parallel for
     for(int i = 0; i < dif.M; i++) 
         for(int j = 0; j < dif.N; j++) 
             dif(i, j) = left(i, j) - right(i, j);
 }
 
 void Matrix::MUL(Matrix & prod, Matrix & left, Matrix & right) {
-    #pragma omp parallel for
     for(int i = 0; i < prod.M; i++) 
         for(int j = 0; j < prod.N; j++) {
             prod(i, j) = 0;
@@ -117,28 +117,24 @@ void Matrix::MUL(Matrix & prod, Matrix & left, Matrix & right) {
 }
 
 void Matrix::MUL(double s, Matrix & m) {
-    #pragma omp parallel for
     for(int i = 0; i < m.M; i++) 
         for(int j = 0; j < m.N; j++) 
             m(i, j) *= s;
 }
 
 void Matrix::HAD(Matrix & prod, Matrix & left, Matrix & right) {
-    #pragma omp parallel for
     for(int i = 0; i < prod.M; i++) 
         for(int j = 0; j < prod.N; j++) 
             prod(i, j) = left(i, j) * right(i, j);
 }
 
 void Matrix::HDA(Matrix & ans, Matrix & left, Matrix & right, Matrix & acc) {
-    #pragma omp parallel for
     for(int i = 0; i < ans.M; i++) 
         for(int j = 0; j < ans.N; j++) 
             ans(i, j) = left(i, j) * right(i, j) + acc(i, j);
 }
 
 void Matrix::MLA(Matrix & ans, Matrix & left, Matrix & right, Matrix & acc) {
-    #pragma omp parallel for
     for(int i = 0; i < ans.M; i++) 
         for(int j = 0; j < ans.N; j++) {
             ans(i, j) = acc(i, j);
@@ -148,14 +144,12 @@ void Matrix::MLA(Matrix & ans, Matrix & left, Matrix & right, Matrix & acc) {
 }
 
 void Matrix::ACT(double(*f)(double), Matrix & y, Matrix & x) {
-    #pragma omp parallel for
     for(int i = 0; i < y.M; i++) 
         for(int j = 0; j < y.N; j++) 
             y(i, j) = f(x(i, j));
 }
 
 void Matrix::DOT(Matrix & prod, Matrix & left, Matrix & right) {
-    #pragma omp parallel for
     for(int i = 0; i < prod.M; i++) 
         for(int j = 0; j < prod.N; j++) {
             prod(i, j) = 0;
@@ -165,7 +159,6 @@ void Matrix::DOT(Matrix & prod, Matrix & left, Matrix & right) {
 }
 
 void Matrix::OUT(Matrix & prod, Matrix & left, Matrix & right) {
-    #pragma omp parallel for
     for(int i = 0; i < prod.M; i++) 
         for(int j = 0; j < prod.N; j++) 
             prod(i, j) = left(i, 0) * right(j, 0);
