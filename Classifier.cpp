@@ -1,4 +1,4 @@
-#include "classifier.h"
+#include "Classifier.h"
 
 void Classifier::forward(Matrix& x) {
 	A[0] = x;

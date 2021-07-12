@@ -10,7 +10,7 @@ int main() {
 	t.readY("Data/ytrain.csv");
 
 
-	t.train(100);
+	t.train(10);
 	cout << t.test() << endl;
 
 	return 0;

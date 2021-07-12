@@ -1,6 +1,6 @@
 #pragma once
 #include "Net.h"
-#include "classifier.h"
+#include "Classifier.h"
 #include <climits>
 
 class Trainer {

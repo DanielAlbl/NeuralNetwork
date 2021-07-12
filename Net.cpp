@@ -142,11 +142,14 @@ void Net::init() {
 
 	for(int i = 0; i < N; i++) {
 		int m = W[i].M, n = W[i].N;
-		normal_distribution<double> dist(0.0, sqrt(2.0 / (m + n)));
+		double s = sqrt(2.0 / n);
+		uniform_real_distribution<double> dist(-s, s);
 
 		for(int j = 0; j < m; j++) 
 			for(int k = 0; k < n; k++) 
 				W[i](j, k) = dist(gen);
+
+		B[i].setZero();
 	}
  }
 
