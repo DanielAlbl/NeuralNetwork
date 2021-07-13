@@ -7,34 +7,33 @@
 class Trainer {
 	Net& N;
 
-	vector<Matrix> X;
-	vector<Matrix> Y;
-
+	vector<Matrix> Xtrain, Ytrain, Xtest, Ytest;
 	vector<int> order;
+	vector<double> mean, std;
 
-	int dataPoints = 0;
-	int batchSize = 150;
+	int trainSize = 0;
+	int testSize = 0;
+	int batchSize = 32;
 	int maxRows = INT_MAX;
 
-	int inDim;
-	int outDim;
+	int inDim, outDim;
 
 	double stepSize = 0.1;
 
-	double mean;
-	double std;
-
 	void initOrder();
+	void read(vector<Matrix>& v, const char * file, int size);
+
+	void standardizeTrain();
+	void standardizeTest();
 
 public:
 	Trainer(Net& n);
 
-	void readX(const char* file);
-	void readY(const char* file);
+	void readTraining(const char* x, const char* y);
+	void readTesting(const char* x, const char* y);
 
 	void train(int itr);
 	double test();
 
-	void standardize();
 };
 

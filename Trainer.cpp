@@ -1,61 +1,54 @@
 #include "Trainer.h"
 
 void Trainer::initOrder() {
-	if (order.size() == (uint)dataPoints) return;
-	order.resize(dataPoints);
+	order.resize(trainSize);
 	iota(order.begin(), order.end(), 0);
 }
 
 Trainer::Trainer(Net& n)
 	: N(n), inDim(N.getInDim()), outDim(N.getOutDim()) {}
 
-void Trainer::readX(const char * file) {
+void Trainer::read(vector<Matrix>& v, const char * file, int size) {
 	ifstream fin(file, ios::in);
-
 	string line, num;
-	vector<double> tmp(inDim);
+	vector<double> tmp(size);
 
-	int i = 0;
-	for(; i < maxRows and getline(fin, line); i++) {
+	for (int i = 0; i < maxRows and getline(fin, line); i++) {
 		stringstream ss(line);
-		for(int j = 0; getline(ss, num, ','); j++) 
+		for (int j = 0; getline(ss, num, ','); j++) 
 			tmp[j] = stod(num);
-		X.emplace_back(Matrix(tmp));
+		v.emplace_back(Matrix(tmp));
 	}
+}
 
-	dataPoints = i;
+void Trainer::readTraining(const char * x, const char * y) {
+	read(Xtrain, x, inDim);
+	read(Ytrain, y, outDim);
 
-	standardize();
+	trainSize = Xtrain.size();
+
+	standardizeTrain();
 	initOrder();
 }
 
-void Trainer::readY(const char * file) {
-	ifstream fin(file, ios::in);
+void Trainer::readTesting(const char * x, const char * y) {
+	read(Xtest, x, inDim);
+	read(Ytest, y, outDim);
 
-	string line, num;
-	vector<double> tmp(outDim);
+	testSize = Xtest.size();
 
-	int i = 0;
-	for(; i < maxRows and getline(fin, line); i++) {
-		stringstream ss(line);
-		for(int j = 0; getline(ss, num, ','); j++) 
-			tmp[j] = stod(num);
-		Y.emplace_back(Matrix(tmp));
-	}
-
-	dataPoints = i;
-	initOrder();
+	standardizeTest();
 }
 
 void Trainer::train(int epochs) {
-	for(int i = 0; i < epochs; i++) {
+	for (int i = 0; i < epochs; i++) {
 		shuffle(order.begin(), order.end(), mt19937());
 		int j = 0;
-		while (j < dataPoints) {
-			int bound = min(j + batchSize, dataPoints), size = bound - j;
+		while (j < trainSize) {
+			int bound = min(j + batchSize, trainSize), size = bound - j;
 			for (; j < bound; j++) {
-				N.forward(X[order[j]]);
-				N.backward(Y[order[j]]);
+				N.forward(Xtrain[order[j]]);
+				N.backward(Ytrain[order[j]]);
 			}
 			N.gradDec(stepSize / size);
 		}
@@ -64,25 +57,37 @@ void Trainer::train(int epochs) {
 
 double Trainer::test() {
 	int cnt = 0;
-	for(int i = 0; i < dataPoints; i++) 
-		cnt += N.predict(X[i]) == Y[i];
+	for (int i = 0; i < testSize; i++) 
+		cnt += N.predict(Xtest[i]) == Ytest[i];
 			
-	return (double)cnt / (double)X.size();
+	return (double)cnt / (double)testSize;
 }
 
-void Trainer::standardize() {
-	for (int j = 0; j < X[0].M; j++) {
-		mean = 0, std = 0;
-		
-		for (int i = 0; i < dataPoints; i++) 
-			mean += X[i](j, 0);
-		mean /= dataPoints;
+void Trainer::standardizeTrain() {
+	mean.resize(inDim, 0); 
+	std.resize(inDim, 0);
 
-		for (int i = 0; i < dataPoints; i++)
-			X[i](j, 0) -= mean, std += X[i](j, 0) * X[i](j, 0);
-		std = sqrt(std / dataPoints);
+	for (int j = 0; j < Xtrain[0].M; j++) {
+		for (int i = 0; i < trainSize; i++) 
+			mean[j] += Xtrain[i](j, 0);
+		mean[j] /= trainSize;
+
+		for (int i = 0; i < trainSize; i++)
+			Xtrain[i](j, 0) -= mean[j], std[j] += Xtrain[i](j, 0) * Xtrain[i](j, 0);
+		std[j] = sqrt(std[j] / trainSize);
 		
-		for (int i = 0; i < dataPoints; i++)
-			X[i](j, 0) /= std;
+		for (int i = 0; i < trainSize; i++)
+			Xtrain[i](j, 0) /= std[j];
 	}
+
+	if(testSize)
+		standardizeTest();
 }
+
+void Trainer::standardizeTest() {
+	if(trainSize == 0) return;
+	for (int i = 0; i < testSize; i++)
+		for (int j = 0; j < inDim; j++)
+			Xtest[i](j, 0) = (Xtest[i](j, 0) - mean[j]) / std[j];
+}
+

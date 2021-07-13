@@ -6,11 +6,9 @@ int main() {
 	Classifier n({X_DIM,50,50,50,Y_DIM});
 	Trainer t(n);
 
-	t.readX("Data/xtrain.csv");
-	t.readY("Data/ytrain.csv");
+	t.readTraining("Data/xtrain.csv", "Data/ytrain.csv");
+	t.readTesting("Data/xtest.csv", "Data/ytest.csv");
 
-	t.train(100);
+	t.train(10);
 	cout << t.test() << endl;
-
-	return 0;
 }
