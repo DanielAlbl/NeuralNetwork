@@ -121,9 +121,9 @@ void Net::write(const char* file) {
 }
 
 Matrix Net::predict(Matrix& x) {
-	int am;
+	int am = 0;
 	double mx = -DBL_MAX;
-	Matrix m(A[N].M, 1);
+	Matrix out(A[N].M, 1);
 
 	forward(x);
 
@@ -131,9 +131,9 @@ Matrix Net::predict(Matrix& x) {
 		if(A[N](i, 0) > mx)
 			mx = A[N](i, 0), am = i;
 
-	m(am, 0) = 1.0;
+	out(am, 0) = 1.0;
 	
-	return m;
+	return out;
 }
 
 void Net::init() {

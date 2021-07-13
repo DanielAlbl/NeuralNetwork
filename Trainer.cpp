@@ -1,7 +1,7 @@
 #include "Trainer.h"
 
 void Trainer::initOrder() {
-	if (order.size() == dataPoints) return;
+	if (order.size() == (uint)dataPoints) return;
 	order.resize(dataPoints);
 	iota(order.begin(), order.end(), 0);
 }
@@ -64,7 +64,7 @@ void Trainer::train(int epochs) {
 
 double Trainer::test() {
 	int cnt = 0;
-	for(int i = 0; i < X.size(); i++) 
+	for(int i = 0; i < dataPoints; i++) 
 		cnt += N.predict(X[i]) == Y[i];
 			
 	return (double)cnt / (double)X.size();
