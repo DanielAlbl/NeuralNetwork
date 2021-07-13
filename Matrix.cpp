@@ -164,6 +164,12 @@ void Matrix::OUT(Matrix & prod, Matrix & left, Matrix & right) {
             prod(i, j) = left(i, 0) * right(j, 0);
 }
 
+void Matrix::OTA(Matrix& prod, Matrix& left, Matrix& right, Matrix& acc) {
+    for (int i = 0; i < prod.M; i++)
+        for (int j = 0; j < prod.N; j++)
+            prod(i, j) = left(i, 0) * right(j, 0) + acc(i, j);
+}
+
 Matrix operator*(Matrix& left, Matrix& right) {
     Matrix prod(left.M, right.N);
     Matrix::MUL(prod, left, right);

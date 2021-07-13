@@ -1,6 +1,12 @@
 #include "Trainer.h"
 
-Trainer::Trainer(Net& n) 
+void Trainer::initOrder() {
+	if (order.size() == dataPoints) return;
+	order.resize(dataPoints);
+	iota(order.begin(), order.end(), 0);
+}
+
+Trainer::Trainer(Net& n)
 	: N(n), inDim(N.getInDim()), outDim(N.getOutDim()) {}
 
 void Trainer::readX(const char * file) {
@@ -18,6 +24,7 @@ void Trainer::readX(const char * file) {
 	}
 
 	dataPoints = i;
+	initOrder();
 }
 
 void Trainer::readY(const char * file) {
@@ -35,19 +42,21 @@ void Trainer::readY(const char * file) {
 	}
 
 	dataPoints = i;
+	initOrder();
 }
 
-void Trainer::train(int itr) {
-	srand(time(NULL));
-	int rnd;
-
-	for(int i = 0; i < itr; i++) {
-		for(int j = 0; j < batchSize; j++) {
-			rnd = rand() % dataPoints;
-			N.forward(X[rnd]);
-			N.backward(Y[rnd]);
+void Trainer::train(int epochs) {
+	for(int i = 0; i < epochs; i++) {
+		shuffle(order.begin(), order.end(), mt19937());
+		int j = 0;
+		while (j < dataPoints) {
+			int bound = min(j + batchSize, dataPoints), size = bound - j;
+			for (; j < bound; j++) {
+				N.forward(X[order[j]]);
+				N.backward(Y[order[j]]);
+			}
+			N.gradDec(stepSize / size);
 		}
-		N.gradDec(stepSize / batchSize);
 	}
 }
 

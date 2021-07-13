@@ -2,12 +2,15 @@
 #include "Net.h"
 #include "Classifier.h"
 #include <climits>
+#include <numeric>
 
 class Trainer {
 	Net& N;
 
 	vector<Matrix> X;
 	vector<Matrix> Y;
+
+	vector<int> order;
 
 	int dataPoints = 0;
 	int batchSize = 32;
@@ -17,6 +20,8 @@ class Trainer {
 	int outDim;
 
 	double stepSize = 0.0001;
+
+	void initOrder();
 
 public:
 	Trainer(Net& n);

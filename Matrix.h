@@ -35,20 +35,21 @@ public:
     friend Matrix operator-(Matrix& left, Matrix& right);
 
     // can specify the ans matrix to avoid extra copying
-    // also reminds me of ARM
+    // also reminds me of Assembly
     static void ADD(Matrix& sum, Matrix& left, Matrix& right);
     static void SUB(Matrix& dif, Matrix& left, Matrix& right);
 
-    static void MUL(Matrix& prod, Matrix& left, Matrix& right);
-    static void MUL(double s, Matrix& m);
-    static void MLA(Matrix& ans, Matrix& left, Matrix& right, Matrix& acc);
+    static void MUL(Matrix& prod, Matrix& left, Matrix& right); // Matrix Multiply
+    static void MUL(double s, Matrix& m); // Scalar Multiply
+    static void MLA(Matrix& ans, Matrix& left, Matrix& right, Matrix& acc); // Multiply Accumulate
 
     static void HAD(Matrix& prod, Matrix& left, Matrix& right); // Hadamard Product
     static void HDA(Matrix& ans, Matrix& left, Matrix& right, Matrix& acc); // Hadamard Accumulate
 
     static void DOT(Matrix& prod, Matrix& left, Matrix& right); // Dot Product
     static void OUT(Matrix& prod, Matrix& left, Matrix& right); // Outer Product
+    static void OTA(Matrix& prod, Matrix& left, Matrix& right, Matrix& acc); // Outer Product Accumulate
 
-    static void ACT(double(*f)(double), Matrix& y, Matrix& x);
+    static void ACT(double(*f)(double), Matrix& y, Matrix& x); // Action aka perform function elementwise
 };
 

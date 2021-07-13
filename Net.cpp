@@ -67,7 +67,7 @@ void Net::backward(Matrix& y) {
 		Matrix::HAD(A[i + 1], A[i + 1], V[i]); // A[i+1] holds dCost/dV[i]
 
 		Matrix::ADD(dB[i], dB[i], A[i + 1]); // add dCost/dB[i] to running sum for the current batch
-		Matrix::OUT(dW[i], A[i + 1], A[i]); // add dCost/dW[i] to the running sum
+		Matrix::OTA(dW[i], A[i + 1], A[i], dW[i]); // add dCost/dW[i] to the running sum
 
 		Matrix::DOT(A[i], W[i], A[i + 1]); // A[i] now holds dCost/dA[i] 
 	}
@@ -89,7 +89,7 @@ void Net::gradDec(double alpha) {
 void Net::printOutput() {
 	A[N].print();
 }
-
+	
 int Net::getInDim() {
 	return W[0].N;
 }
