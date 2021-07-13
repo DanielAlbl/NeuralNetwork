@@ -24,6 +24,8 @@ void Trainer::readX(const char * file) {
 	}
 
 	dataPoints = i;
+
+	standardize();
 	initOrder();
 }
 
@@ -66,4 +68,21 @@ double Trainer::test() {
 		cnt += N.predict(X[i]) == Y[i];
 			
 	return (double)cnt / (double)X.size();
+}
+
+void Trainer::standardize() {
+	for (int j = 0; j < X[0].M; j++) {
+		mean = 0, std = 0;
+		
+		for (int i = 0; i < dataPoints; i++) 
+			mean += X[i](j, 0);
+		mean /= dataPoints;
+
+		for (int i = 0; i < dataPoints; i++)
+			X[i](j, 0) -= mean, std += X[i](j, 0) * X[i](j, 0);
+		std = sqrt(std / dataPoints);
+		
+		for (int i = 0; i < dataPoints; i++)
+			X[i](j, 0) /= std;
+	}
 }

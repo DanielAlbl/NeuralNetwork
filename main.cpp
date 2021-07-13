@@ -3,14 +3,13 @@
 const int X_DIM = 4, Y_DIM = 3;
 
 int main() {
-	Classifier n({X_DIM,50,50,Y_DIM});
+	Classifier n({X_DIM,50,50,50,Y_DIM});
 	Trainer t(n);
 
 	t.readX("Data/xtrain.csv");
 	t.readY("Data/ytrain.csv");
 
-
-	t.train(10);
+	t.train(100);
 	cout << t.test() << endl;
 
 	return 0;

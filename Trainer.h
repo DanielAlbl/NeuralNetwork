@@ -13,13 +13,16 @@ class Trainer {
 	vector<int> order;
 
 	int dataPoints = 0;
-	int batchSize = 32;
+	int batchSize = 150;
 	int maxRows = INT_MAX;
 
 	int inDim;
 	int outDim;
 
-	double stepSize = 0.0001;
+	double stepSize = 0.1;
+
+	double mean;
+	double std;
 
 	void initOrder();
 
@@ -31,5 +34,7 @@ public:
 
 	void train(int itr);
 	double test();
+
+	void standardize();
 };
 
