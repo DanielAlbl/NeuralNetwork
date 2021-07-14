@@ -149,6 +149,21 @@ void Matrix::ACT(double(*f)(double), Matrix & y, Matrix & x) {
             y(i, j) = f(x(i, j));
 }
 
+void Matrix::CNV(Matrix& conv, Matrix& img, Matrix& kernel) {
+    for (int i = 0; i < conv.M; i++)
+        for (int j = 0; j < conv.N; j++) {
+            conv(i, j) = 0;
+            for (int k = 0; k < kernel.M; k++) {
+                int i_ = k - kernel.M / 2;
+                for (int l = 0; l < kernel.N; l++) {
+                    int j_ = l - kernel.N / 2;
+                    if (i_ >= 0 and i_ < img.M and j_ >= 0 and j_ < img.N)
+                        conv(i, j) += img(i_, j_) * kernel(k, l);
+                }
+            }
+        }
+}
+
 void Matrix::DOT(Matrix & prod, Matrix & left, Matrix & right) {
     for(int i = 0; i < prod.M; i++) 
         for(int j = 0; j < prod.N; j++) {
