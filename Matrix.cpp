@@ -150,8 +150,8 @@ void Matrix::ACT(double(*f)(double), Matrix & y, Matrix & x) {
 }
 
 void Matrix::CNV(Matrix& conv, Matrix& img, Matrix& kernel) {
-    for (int i = 0; i < conv.M; i++)
-        for (int j = 0; j < conv.N; j++) {
+    for (int i = 0; i < img.M; i++)
+        for (int j = 0; j < img.N; j++) {
             conv(i, j) = 0;
             for (int k = 0; k < kernel.M; k++) {
                 int i_ = k - kernel.M / 2;
@@ -162,6 +162,20 @@ void Matrix::CNV(Matrix& conv, Matrix& img, Matrix& kernel) {
                 }
             }
         }
+}
+
+void Matrix::MPL(Matrix& pool, Matrix& img, int m, int n) {
+    for (int i = 0; i < img.M; i += m) {
+        int m_ = min(i + m, img.M);
+        for (int j = 0; j < img.N; j += n) {
+            int n_ = min(j + n, img.N);
+            double mx = -DBL_MAX;
+            for (int k = i; i < m_; k++)
+                for (int l = j; l < n_; l++)
+                    mx = max(mx, img(i, j));
+            pool(i / m, j / n) = mx;
+        }
+    }
 }
 
 void Matrix::DOT(Matrix & prod, Matrix & left, Matrix & right) {
