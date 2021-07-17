@@ -51,7 +51,5 @@ public:
     static void OTA(Matrix& prod, Matrix& left, Matrix& right, Matrix& acc); // Outer Product Accumulate
 
     static void ACT(double(*f)(double), Matrix& y, Matrix& x); // Action aka perform function elementwise
-    static void CNV(Matrix& conv, Matrix& img, Matrix& kernel); // Convolution 
-    static void MPL(Matrix& pool, Matrix& img, int m, int n); // Max pooling
 };
 

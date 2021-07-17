@@ -1,4 +1,4 @@
-SOURCE = main.cpp Matrix.cpp Trainer.cpp Net.cpp Classifier.cpp
+SOURCE = main.cpp Matrix.cpp Trainer.cpp Net.cpp Classifier.cpp CNN.cpp
      
 OBJS = $(SOURCE:.cpp=.o)
 

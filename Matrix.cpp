@@ -149,35 +149,6 @@ void Matrix::ACT(double(*f)(double), Matrix & y, Matrix & x) {
             y(i, j) = f(x(i, j));
 }
 
-void Matrix::CNV(Matrix& conv, Matrix& img, Matrix& kernel) {
-    for (int i = 0; i < img.M; i++)
-        for (int j = 0; j < img.N; j++) {
-            conv(i, j) = 0;
-            for (int k = 0; k < kernel.M; k++) {
-                int i_ = k - kernel.M / 2;
-                for (int l = 0; l < kernel.N; l++) {
-                    int j_ = l - kernel.N / 2;
-                    if (i_ >= 0 and i_ < img.M and j_ >= 0 and j_ < img.N)
-                        conv(i, j) += img(i_, j_) * kernel(k, l);
-                }
-            }
-        }
-}
-
-void Matrix::MPL(Matrix& pool, Matrix& img, int m, int n) {
-    for (int i = 0; i < img.M; i += m) {
-        int m_ = min(i + m, img.M);
-        for (int j = 0; j < img.N; j += n) {
-            int n_ = min(j + n, img.N);
-            double mx = -DBL_MAX;
-            for (int k = i; i < m_; k++)
-                for (int l = j; l < n_; l++)
-                    mx = max(mx, img(i, j));
-            pool(i / m, j / n) = mx;
-        }
-    }
-}
-
 void Matrix::DOT(Matrix & prod, Matrix & left, Matrix & right) {
     for(int i = 0; i < prod.M; i++) 
         for(int j = 0; j < prod.N; j++) {
