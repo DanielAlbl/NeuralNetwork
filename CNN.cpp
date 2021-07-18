@@ -4,7 +4,7 @@ void CNN::forward(tensor3& x) {
 	int j = 0;
 	V[0] = x;
 
-	for (int i = 0; i < layers.size(); i++) {
+	for (int i = 0; i < N; i++) {
 		if (layers[i].size() == 3) {
 			CNV(V[i + 1], V[i], W[j]);
 			ADD(V[i + 1], V[i + 1], B[j]);
@@ -14,4 +14,11 @@ void CNN::forward(tensor3& x) {
 		else
 			MPL(V[i + 1], V[i], layers[i][0], layers[i][1]);
 	}
+
+	Matrix tmp = flatten(V[N]);
+	C.forward(tmp);
+}
+
+void CNN::backward(tensor1& y) {
+
 }

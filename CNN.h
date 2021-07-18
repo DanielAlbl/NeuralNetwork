@@ -3,6 +3,7 @@
 #include "Classifier.h"
 
 class CNN {
+	int N;
 	vector<vector<int>> layers; // stores dimensionts of conv and pool layers
 
 	tensor5 W; // weights
@@ -17,4 +18,5 @@ class CNN {
 
 public:
 	void forward(tensor3& x);
+	void backward(tensor1& y);
 };
