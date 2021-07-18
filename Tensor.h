@@ -9,8 +9,22 @@ typedef vector<tensor2> tensor3;
 typedef vector<tensor3> tensor4;
 typedef vector<tensor4> tensor5;
 
+// Convolution helpers
+void abc(double& a, double& b, double& c) { a += b * c; }
+void bac(double& a, double& b, double& c) { b += a * c; }
+void cab(double& a, double& b, double& c) { c += a * b; }
+
+void setZero(tensor3& t) {
+	int M = t.size(), N = t[0].size(), D = t[0][0].size();
+	for (int i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			for (int k = 0; k < D; k++)
+				t[i][j][k] = 0.0;
+}
+
+// Convolution
 // only works for odd dim kernels
-void CNV(tensor3& prod, tensor3& img, tensor4& kern) {
+void CNV(tensor3& prod, tensor3& img, tensor4& kern, void(*f)(double&,double&,double&)) {
 	int M = img.size(), N = img[0].size(), D = img[0][0].size();
 	int d = kern.size(), m = kern[0].size(), n = kern[0][0].size();
 
@@ -18,32 +32,11 @@ void CNV(tensor3& prod, tensor3& img, tensor4& kern) {
 		int m_ = min(i + m/2, M), sti = i - m/2;
 		for (int j = 0; j < N; j++) {
 			int n_ = min(j + n/2, N), stj = j - n/2;
-			for (int k_ = 0; k_ < d; k_++) {
-				double sum = 0;
+			for (int k_ = 0; k_ < d; k_++)
 				for (int i_ = max(0, sti); i_ < m_; i_++)
 					for (int j_ = max(0, stj); j_ < n_; j_++)
 						for (int k = 0; k < D; k++)
-							sum += img[i_][j_][k] * kern[k_][i_ - sti][j_ - stj][k];
-				prod[i][j][k_] = sum;
-			}
-		}
-	}
-}
-
-// add convolution derivatives
-void CVD(tensor4& dw, tensor3& v, tensor3& dv) {
-	int M = v.size(), N = v[0].size(), D = v[0][0].size();
-	int d = dw.size(), m = dw[0].size(), n = dw[0][0].size();
-
-	for (int i = 0; i < M; i++) {
-		int m_ = min(i + m/2, M), sti = i - m/2;
-		for (int j = 0; j < N; j++) {
-			int n_ = min(j + n/2, N), stj = j - n/2;
-			for (int k_ = 0; k_ < d; k_++) 
-				for (int i_ = max(0, sti); i_ < m_; i_++)
-					for (int j_ = max(0, stj); j_ < n_; j_++)
-						for (int k = 0; k < D; k++)
-							dw[k_][i_ - sti][j_ - stj][k] += v[i_][j_][k] * dv[i][j][k_];
+							f(prod[i][j][k_], img[i_][j_][k], kern[k_][i_-sti][j_-stj][k]);
 		}
 	}
 }
@@ -84,6 +77,14 @@ void ADD(tensor3& sum, tensor3& left, tensor1& right) {
 				sum[i][j][k] = left[i][j][k] + right[k];
 }
 
+void ADD(tensor1& sum, tensor1& left, tensor3& right) {
+	int M = right.size(), N = right[0].size(), D = right[0][0].size();
+	for (int i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			for (int k = 0; k < D; k++)
+				sum[k] = left[k] + right[i][j][k];
+}
+
 // just assume activation is relu
 void ACT(tensor3& y, tensor3& x) {
 	int M = x.size(), N = x[0].size(), D = x[0][0].size();
@@ -102,14 +103,33 @@ void ATD(tensor3& dv, tensor3& v) {
 				dv[i][j][k] *= v[i][j][k] == 0.0;
 }
 
-Matrix flatten(tensor3& t) {
-	int M = t.size(), N = t[0].size(), D = t[0][0].size();
-	tensor1 v; v.reserve(M * N * D);
-
+void flatten(Matrix& m, tensor3& t) {
+	int M = t.size(), N = t[0].size(), D = t[0][0].size(), i_ = 0;
 	for (int i = 0; i < M; i++)
 		for (int j = 0; j < N; j++)
 			for (int k = 0; k < D; k++)
-				v.push_back(t[i][j][k]);
+				m(i_++, 0) = t[i][j][k];
+}
 
-	return Matrix(v);
+void unFlatten(tensor3& t, Matrix& m) {
+	int M = t.size(), N = t[0].size(), D = t[0][0].size(), i_ = 0;
+	for (int i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			for (int k = 0; k < D; k++)
+				t[i][j][k] = m(i_++, 0);
+}
+tensor1 makeTensor1(int m) {
+	return tensor1(m);
+}
+
+tensor2 makeTensor2(int m, int n) {
+	return tensor2(m, makeTensor1(m));
+}
+
+tensor3 makeTensor3(int m, int n, int d) {
+	return tensor3(m, makeTensor2(n, d));
+}
+
+tensor4 makeTensor4(int m, int n, int d, int e) {
+	return tensor4(m, makeTensor3(n, d, e));
 }

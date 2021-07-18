@@ -98,6 +98,10 @@ int Net::getOutDim() {
 	return W[N-1].M;
 }
 
+Matrix& Net::getInputGrad() {
+	return A[0];
+}
+
 void Net::read(const char* file) {
 	ifstream fin(file);
 

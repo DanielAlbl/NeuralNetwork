@@ -41,6 +41,7 @@ public:
 
 	int getInDim();
 	int getOutDim();
+	Matrix& getInputGrad();
 
 	void read(const char* file);
 	void write(const char* file);
