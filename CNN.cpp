@@ -1,6 +1,6 @@
 #include "CNN.h"
 
-CNN::CNN(vector<int> const& inDim, vector<int> const& conv, Classifier& net) : layers(conv), C(net) {
+CNN::CNN(vector<int> const& inDim, vector<int> const& conv, vector<int> const& fc) : layers(conv) {
 	int m = inDim[0], n = inDim[1], d = inDim[2];
 	N = layers.size(), M = N-count(layers.begin(), layers.end(), 0);
 
@@ -23,7 +23,28 @@ CNN::CNN(vector<int> const& inDim, vector<int> const& conv, Classifier& net) : l
 			V[i + 1] = dV[i + 1] = makeTensor3(m, n, V[i][0][0].size());
 		}
 	}
-} 
+
+	init();
+
+	// add input layer to fully connected net of size of flattend output of conv net
+	vector<int> tmp{ (int) (V[N].size() * V[N][0].size() * V[N][0].size()) };
+	tmp.insert(tmp.end(), fc.begin(), fc.end());
+	C = move(Classifier(tmp));
+}
+
+void CNN::init() {
+	int kDim = km * kn;
+	random_device gen;
+	for (auto& i : W) {
+		normal_distribution<double> dist(0, sqrt(2.0 / (kDim * (double)i[0][0].size())));
+		for (auto& j : i)
+			for (auto& k : j)
+				for (auto& l : k)
+					for(auto& m : l)
+						m = dist(gen);
+	}
+}
+
 
 void CNN::forward(tensor3& x) {
 	int j = 0;
