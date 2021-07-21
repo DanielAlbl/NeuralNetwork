@@ -2,7 +2,6 @@
 #include <random>
 #include "Tensor.h"
 #include "Classifier.h"
-using namespace std;
 
 class CNN {
 	int N, M;
@@ -28,4 +27,6 @@ public:
 
 	void forward(tensor3& x);
 	void backward(tensor1& y);
+
+	void gradDec(double alpha);
 };

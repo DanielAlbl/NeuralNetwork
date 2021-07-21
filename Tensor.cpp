@@ -5,13 +5,16 @@ void abc(double& a, double& b, double& c) { a += b * c; }
 void bac(double& a, double& b, double& c) { b += a * c; }
 void cab(double& a, double& b, double& c) { c += a * b; }
 
-void setZero(tensor3& t) {
-	int M = t.size(), N = t[0].size(), D = t[0][0].size();
-	for (int i = 0; i < M; i++)
-		for (int j = 0; j < N; j++)
-			for (int k = 0; k < D; k++)
-				t[i][j][k] = 0.0;
+void setZero(tensor2& t) {
+	for (auto& i : t)
+		fill(i.begin(), i.end(), 0.0);
 }
+
+void setZero(tensor3& t) { for (auto& i : t) setZero(i); }
+
+void setZero(tensor4& t) { for (auto& i : t) setZero(i); }
+
+void setZero(tensor5& t) { for (auto& i : t) setZero(i); }
 
 // Convolution
 // only works for odd dim kernels
@@ -74,6 +77,36 @@ void ADD(tensor1& sum, tensor1& left, tensor3& right) {
 		for (int j = 0; j < N; j++)
 			for (int k = 0; k < D; k++)
 				sum[k] = left[k] + right[i][j][k];
+}
+
+void SUB(tensor5& diff, tensor5& left, tensor5& right) {
+	int M = left.size(), N = left[0].size(), D = left[0][0].size();
+	for (int i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			for (int k = 0; k < D; k++)
+				SUB(diff[i][j][k], left[i][j][k], right[i][j][k]);
+}
+
+void SUB(tensor2& diff, tensor2& left, tensor2& right) {
+	int M = left.size(), N = left[0].size();
+	for (int i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			diff[i][j] = left[i][j] - right[i][j];
+}
+
+void MUL(tensor5& prod, double s, tensor5& t) {
+	int M = t.size(), N = t[0].size(), D = t[0][0].size();
+	for (int i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			for (int k = 0; k < D; k++)
+				MUL(prod[i][j][k], s, t[i][j][k]);
+}
+
+void MUL(tensor2& prod, double s, tensor2& t) {
+	int M = t.size(), N = t[0].size();
+	for (int i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			prod[i][j] = s * t[i][j];
 }
 
 // just assume activation is relu

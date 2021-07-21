@@ -45,7 +45,6 @@ void CNN::init() {
 	}
 }
 
-
 void CNN::forward(tensor3& x) {
 	int j = 0;
 	V[0] = x;
@@ -88,4 +87,15 @@ void CNN::backward(tensor1& y) {
 		else
 			MPD(dV[i], V[i], V[i + 1], pm, pn); // calc dV[i] for in the case of max pooling
 	}
+}
+
+void CNN::gradDec(double alpha) {
+	MUL(W, alpha, W);
+	MUL(B, alpha, B);
+
+	SUB(W, W, dW);
+	SUB(B, B, dB);
+	
+	setZero(dW);
+	setZero(dB);
 }

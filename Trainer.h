@@ -34,6 +34,5 @@ public:
 
 	void train(int itr);
 	double test();
-
 };
 

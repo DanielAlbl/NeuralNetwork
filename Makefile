@@ -1,4 +1,4 @@
-SOURCE = main.cpp Matrix.cpp Trainer.cpp Net.cpp Classifier.cpp CNN.cpp Tensor.cpp
+SOURCE = main.cpp Matrix.cpp Trainer.cpp Net.cpp Classifier.cpp CNN.cpp CNNTrainer.cpp Tensor.cpp
      
 OBJS = $(SOURCE:.cpp=.o)
 
@@ -6,10 +6,10 @@ GCC = g++
 
 LINK = g++
 
-CFLAGS = -Wall -O3 -std=c++11 -I. 
+CFLAGS = -Wall -O3 -std=c++17 -I. `pkg-config --cflags --libs opencv4`
 CXXFLAGS = $(CFLAGS)
 
-LIBS = 
+LIBS = `pkg-config  --libs opencv4` 
 
 .PHONY: clean
 
@@ -21,7 +21,7 @@ main: $(OBJS)
 clean:
 	rm -rf *.o *.d core main
 
-debug: CXXFLAGS = -DDEBUG -g -std=c++11
+debug: CXXFLAGS = -DDEBUG -g -std=c++17 `pkg-config --cflags --libs opencv4`
 debug: main
 
 -include $(SOURCE:.cpp=.d)
