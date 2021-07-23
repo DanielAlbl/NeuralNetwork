@@ -104,7 +104,7 @@ void CNN::gradDec(float alpha) {
 }
 
 tensor1 CNN::predict(tensor3& x) {
-	tensor1 out(C.getOutDim(), 0);
+	tensor1 out(C.getOutDim(), 0.0);
 
 	forward(x);
 

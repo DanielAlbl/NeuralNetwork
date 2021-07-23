@@ -26,15 +26,11 @@ void CNV(tensor3& prod, tensor3& img, tensor4& kern, void(*f)(float&, float&, fl
 		int m_ = min(i + m / 2, M), sti = i - m / 2;
 		for (int j = 0; j < N; j++) {
 			int n_ = min(j + n / 2, N), stj = j - n / 2;
-			for (int k_ = 0; k_ < d; k_++) {
-				for (int i_ = max(0, sti); i_ < m_; i_++) {
-					for (int j_ = max(0, stj); j_ < n_; j_++) {
-						for (int k = 0; k < D; k++) {
+			for (int k_ = 0; k_ < d; k_++) 
+				for (int i_ = max(0, sti); i_ < m_; i_++) 
+					for (int j_ = max(0, stj); j_ < n_; j_++) 
+						for (int k = 0; k < D; k++) 
 							f(prod[i][j][k_], img[i_][j_][k], kern[k_][i_ - sti][j_ - stj][k]);
-						}
-					}
-				}
-			}
 		}
 	}
 }
@@ -145,11 +141,11 @@ void unFlatten(tensor3& t, Matrix& m) {
 	for (int i = 0; i < M; i++)
 		for (int j = 0; j < N; j++)
 			for (int k = 0; k < D; k++)
-				t[i][j][k] = m(i_++, 0);
+				t[i][j][k] = m(i_++, 0.0);
 }
 
 tensor1 makeTensor1(int m) {
-	return tensor1(m, 0);
+	return tensor1(m, 0.0);
 }
 
 tensor2 makeTensor2(int m, int n) {

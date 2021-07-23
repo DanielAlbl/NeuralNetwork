@@ -1,8 +1,8 @@
 #include "CNNTrainer.h"
 
 tensor1 CNNTrainer::to1hot(int x, int size) {
-	tensor1 t(size, 0);
-	t[x] = 1;
+	tensor1 t(size, 0.0);
+	t[x] = 1.0;
 	return t;
 }
 
@@ -28,7 +28,7 @@ void CNNTrainer::standardizeTrain() {
 				std[j][k][l] = sqrtf(std[j][k][l] / trainSize);
 
 				for (int i = 0; i < trainSize; i++)
-					Xtrain[i][j][k][l] = std[j][k][l] ? Xtrain[i][j][k][l] / std[j][k][l] : 0;
+					Xtrain[i][j][k][l] = std[j][k][l] ? Xtrain[i][j][k][l] / std[j][k][l] : 0.0;
 			}
 
 	if (testSize)
@@ -43,7 +43,7 @@ void CNNTrainer::standardizeTest() {
 		for (int j = 0; j < M; j++)
 			for (int k = 0; k < N; k++)
 				for (int l = 0; l < D; l++) 
-					Xtest[i][j][k][l] = (Xtest[i][j][k][l] - mean[j][k][l]) / std[j][k][l];
+					Xtest[i][j][k][l] = std[j][k][l] ? (Xtest[i][j][k][l] - mean[j][k][l]) / std[j][k][l] : 0.0;
 }
 
 void CNNTrainer::readTrainFromDir(const char* dir) {
@@ -101,8 +101,8 @@ float CNNTrainer::testOnTrain() {
 		cout << "\rTesting: " << 100.0 * (i + 1) / trainSize << "%          ";
 		cout.flush();
 	}
+
 	float acc = (float) cnt / (float) trainSize;
 	cout << "\nAccuracy: " << acc << '\n';
-
 	return acc;
 }

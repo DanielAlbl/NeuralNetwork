@@ -144,13 +144,11 @@ Matrix Net::predict(Matrix& x) {
 }
 
 void Net::init() {
-	unsigned seed = system_clock::now().time_since_epoch().count();
-	default_random_engine gen(seed);
+	random_device gen;
 
 	for(int i = 0; i < N; i++) {
 		int m = W[i].M, n = W[i].N;
-		float s = sqrtf(2.0 / n);
-		uniform_real_distribution<float> dist(-s, s);
+		normal_distribution<float> dist(0, sqrtf(2.0 / n));
 
 		for(int j = 0; j < m; j++) 
 			for(int k = 0; k < n; k++) 

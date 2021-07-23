@@ -22,6 +22,8 @@ void Trainer::read(vector<Matrix>& v, const char * file, int size) {
 }
 
 void Trainer::readTraining(const char * x, const char * y) {
+	cout << "Reading train data...\n";
+
 	read(Xtrain, x, inDim);
 	read(Ytrain, y, outDim);
 
@@ -32,6 +34,8 @@ void Trainer::readTraining(const char * x, const char * y) {
 }
 
 void Trainer::readTesting(const char * x, const char * y) {
+	cout << "Reading test data...\n";
+
 	read(Xtest, x, inDim);
 	read(Ytest, y, outDim);
 
@@ -51,16 +55,24 @@ void Trainer::train(int epochs) {
 				N.backward(Ytrain[order[j]]);
 			}
 			N.gradDec(stepSize / size);
+			cout << "\rTraining: " << 100.0 * (i * trainSize + j) / (epochs * trainSize) << "%            ";
+			cout.flush();
 		}
 	}
+	cout << endl;
 }
 
 float Trainer::test() {
 	int cnt = 0;
-	for (int i = 0; i < testSize; i++) 
+	for (int i = 0; i < testSize; i++) {
 		cnt += N.predict(Xtest[i]) == Ytest[i];
+		cout << "\rTesting: " << 100.0 * (i + 1) / testSize << "%          ";
+		cout.flush();
+	}
 			
-	return (float)cnt / (float)testSize;
+	float acc = (float)cnt / testSize;
+	cout << "\nAccuracy: " << acc << "\n";
+	return acc;
 }
 
 void Trainer::standardizeTrain() {
@@ -77,7 +89,7 @@ void Trainer::standardizeTrain() {
 		std[j] = sqrt(std[j] / trainSize);
 		
 		for (int i = 0; i < trainSize; i++)
-			Xtrain[i](j, 0) /= std[j];
+			Xtrain[i](j, 0) = std[j] ? Xtrain[i](j, 0) / std[j] : 0.0;
 	}
 
 	if(testSize)
@@ -88,6 +100,6 @@ void Trainer::standardizeTest() {
 	if(trainSize == 0) return;
 	for (int i = 0; i < testSize; i++)
 		for (int j = 0; j < inDim; j++)
-			Xtest[i](j, 0) = (Xtest[i](j, 0) - mean[j]) / std[j];
+			Xtest[i](j, 0) =  std[j] ? (Xtest[i](j, 0) - mean[j]) / std[j] : 0.0;
 }
 
