@@ -27,7 +27,7 @@ void Classifier::backward(Matrix& y) {
 }
 
 void Classifier::softMax(Matrix& y, Matrix& x) {
-	double sum = 0;
+	float sum = 0;
 	for (int i = 0; i < x.M; i++)
 		sum += exp(x(i, 0));
 	for (int i = 0; i < x.M; i++)

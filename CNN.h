@@ -28,5 +28,7 @@ public:
 	void forward(tensor3& x);
 	void backward(tensor1& y);
 
-	void gradDec(double alpha);
+	void gradDec(float alpha);
+
+	tensor1 predict(tensor3& x);
 };

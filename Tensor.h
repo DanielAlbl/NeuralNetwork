@@ -1,27 +1,28 @@
 #pragma once
-#include "Matrix.h"
+#include <vector>
 #include <cfloat>
-using namespace std;
+#include <math.h>
+#include "Matrix.h"
 
-typedef vector<double> tensor1;
+typedef vector<float> tensor1;
 typedef vector<tensor1> tensor2;
 typedef vector<tensor2> tensor3;
 typedef vector<tensor3> tensor4;
 typedef vector<tensor4> tensor5;
 
-// Convolution helpers
-void abc(double& a, double& b, double& c);
-void bac(double& a, double& b, double& c);
-void cab(double& a, double& b, double& c);
+void abc(float& a, float& b, float& c);
+void bac(float& a, float& b, float& c);
+void cab(float& a, float& b, float& c);
 
 void setZero(tensor2& t);
 void setZero(tensor3& t);
 void setZero(tensor4& t);
 void setZero(tensor5& t);
 
-void CNV(tensor3& prod, tensor3& img, tensor4& kern, void(*f)(double&, double&, double&));
+void CNV(tensor3& prod, tensor3& img, tensor4& kern, void(*f)(float&, float&, float&));
+
 void MPL(tensor3& pool, tensor3& img, int m, int n);
-void MPD(tensor3& dv, tensor3& v1, tensor3& v2, int m, int n);
+void MPD(tensor3& dv1, tensor3& dv2, tensor3& v1, tensor3& v2);
 
 void ADD(tensor3& sum, tensor3& left, tensor1& right);
 void ADD(tensor1& sum, tensor1& left, tensor3& right);
@@ -29,8 +30,8 @@ void ADD(tensor1& sum, tensor1& left, tensor3& right);
 void SUB(tensor5& diff, tensor5& left, tensor5& right);
 void SUB(tensor2& diff, tensor2& left, tensor2& right);
 
-void MUL(tensor5& prod, double s, tensor5& t);
-void MUL(tensor2& prod, double s, tensor2& t);
+void MUL(tensor5& prod, float s, tensor5& t);
+void MUL(tensor2& prod, float s, tensor2& t);
 
 void ACT(tensor3& y, tensor3& x);
 void ATD(tensor3& dv, tensor3& v);

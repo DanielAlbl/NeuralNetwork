@@ -73,7 +73,7 @@ void Net::backward(Matrix& y) {
 	}
 }
 
-void Net::gradDec(double alpha) {
+void Net::gradDec(float alpha) {
 	for(int i = 0; i < N; i++) {
 		Matrix::MUL(alpha, dW[i]);
 		Matrix::SUB(W[i], W[i], dW[i]);
@@ -124,18 +124,21 @@ void Net::write(const char* file) {
 	}
 }
 
-Matrix Net::predict(Matrix& x) {
+int Net::getOutputClass() {
 	int am = 0;
-	double mx = -DBL_MAX;
+	float mx = -DBL_MAX;
+	for (int i = 0; i < A[N].M; i++)
+		if (A[N](i, 0) > mx)
+			mx = A[N](i, 0), am = i;
+	return am;
+}
+
+Matrix Net::predict(Matrix& x) {
 	Matrix out(A[N].M, 1);
 
 	forward(x);
 
-	for(int i = 0; i < A[N].M; i++)
-		if(A[N](i, 0) > mx)
-			mx = A[N](i, 0), am = i;
-
-	out(am, 0) = 1.0;
+	out(getOutputClass(), 0) = 1.0;
 	
 	return out;
 }
@@ -146,8 +149,8 @@ void Net::init() {
 
 	for(int i = 0; i < N; i++) {
 		int m = W[i].M, n = W[i].N;
-		double s = sqrt(2.0 / n);
-		uniform_real_distribution<double> dist(-s, s);
+		float s = sqrtf(2.0 / n);
+		uniform_real_distribution<float> dist(-s, s);
 
 		for(int j = 0; j < m; j++) 
 			for(int k = 0; k < n; k++) 
@@ -157,19 +160,19 @@ void Net::init() {
 	}
  }
 
-double Net::reLu(double x) {
-	return max(x, 0.0);
+float Net::reLu(float x) {
+	return fmaxf(x, 0.0);
 }
 
-double Net::reLuPrime(double x) {
+float Net::reLuPrime(float x) {
 	return x > 0 ? 1 : 0;
 }
 
-double Net::sigmoid(double x) {
+float Net::sigmoid(float x) {
 	return (1 / (1 + exp(-x)));
 }
 
-double Net::sigmoidPrime(double x) {
-	double s = sigmoid(x);
+float Net::sigmoidPrime(float x) {
+	float s = sigmoid(x);
 	return s * (1 - s);
 }

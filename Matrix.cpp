@@ -15,14 +15,14 @@ Matrix::Matrix(ifstream& fin, int m, int n) {
     read(fin, m, n);
 }
 
-Matrix::Matrix(vector<double> const& v) {
+Matrix::Matrix(vector<float> const& v) {
     init(v.size(), 1);
 
     for(int i = 0; i < M; i++)
         elements[i][0] = v[i];
 }
 
-Matrix::Matrix(vector<vector<double>> const& v) {
+Matrix::Matrix(vector<vector<float>> const& v) {
     init(v.size(), v[0].size());
 
     for(int i = 0; i < M; i++)
@@ -44,7 +44,7 @@ void Matrix::setZero() {
         fill(v.begin(), v.end(), 0);
 }
 
-void Matrix::applyAct(double(*act)(double)) {
+void Matrix::applyAct(float(*act)(float)) {
     for(int i = 0; i < M; i++) 
         for(int j = 0; j < N; j++) 
             elements[i][j] = act(elements[i][j]);
@@ -79,7 +79,7 @@ void Matrix::write(ofstream& fout) {
     }
 }
 
-double & Matrix::operator()(int i, int j) {
+float & Matrix::operator()(int i, int j) {
     return elements[i][j];
 }
 
@@ -116,7 +116,7 @@ void Matrix::MUL(Matrix & prod, Matrix & left, Matrix & right) {
         }
 }
 
-void Matrix::MUL(double s, Matrix & m) {
+void Matrix::MUL(float s, Matrix & m) {
     for(int i = 0; i < m.M; i++) 
         for(int j = 0; j < m.N; j++) 
             m(i, j) *= s;
@@ -143,7 +143,7 @@ void Matrix::MLA(Matrix & ans, Matrix & left, Matrix & right, Matrix & acc) {
         }
 }
 
-void Matrix::ACT(double(*f)(double), Matrix & y, Matrix & x) {
+void Matrix::ACT(float(*f)(float), Matrix & y, Matrix & x) {
     for(int i = 0; i < y.M; i++) 
         for(int j = 0; j < y.N; j++) 
             y(i, j) = f(x(i, j));

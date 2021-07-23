@@ -27,7 +27,7 @@ CNN::CNN(vector<int> const& inDim, vector<int> const& conv, vector<int> const& f
 	init();
 
 	// add input layer to fully connected net of size of flattend output of conv net
-	vector<int> tmp{ (int) (V[N].size() * V[N][0].size() * V[N][0].size()) };
+	vector<int> tmp{ (int) (V[N].size() * V[N][0].size() * V[N][0][0].size()) };
 	tmp.insert(tmp.end(), fc.begin(), fc.end());
 	C = move(Classifier(tmp));
 }
@@ -36,7 +36,7 @@ void CNN::init() {
 	int kDim = km * kn;
 	random_device gen;
 	for (auto& i : W) {
-		normal_distribution<double> dist(0, sqrt(2.0 / (kDim * (double)i[0][0].size())));
+		normal_distribution<float> dist(0, sqrtf(2.0 / (kDim * i[0][0][0].size())));
 		for (auto& j : i)
 			for (auto& k : j)
 				for (auto& l : k)
@@ -62,7 +62,7 @@ void CNN::forward(tensor3& x) {
 	}
 
 	// feed foward through fully connected layers
-	Matrix m(V[N].size() * V[N][0].size() * V[N][0][0].size(), 0);
+	Matrix m(V[N].size() * V[N][0].size() * V[N][0][0].size(), 1);
 	flatten(m, V[N]);
 	C.forward(m);
 }
@@ -73,29 +73,42 @@ void CNN::backward(tensor1& y) {
 	C.backward(m1);
 	Matrix& m2 = C.getInputGrad();
 	unFlatten(dV[N], m2);
+
 	int j = M-1;
-	
 	for (int i = N - 1; i > -1; i--) {
 		if (layers[i]) {
-			ATD(dV[i + 1], dV[i + 1]); // multiply by activation derivative
+			ATD(dV[i + 1], V[i + 1]); // multiply by activation derivative
 			ADD(dB[j], dB[j], dV[i + 1]); // add bias derivatives to running batch sum
 			CNV(dV[i + 1], V[i], dW[j], cab); // add weight derivatives to running batch sum
 			setZero(dV[i]);
-			CNV(V[i + 1], dV[i], dW[j], bac); // calculate derivative w/ respect to V[i] aka dV[i]
+			CNV(dV[i + 1], dV[i], W[j], bac); // calculate derivative w/ respect to V[i] aka dV[i]
 			j--;
 		}
-		else
-			MPD(dV[i], V[i], V[i + 1], pm, pn); // calc dV[i] for in the case of max pooling
+		else {
+			MPD(dV[i], dV[i + 1], V[i], V[i + 1]); // calc dV[i] for in the case of max pooling
+		}
 	}
 }
 
-void CNN::gradDec(double alpha) {
-	MUL(W, alpha, W);
-	MUL(B, alpha, B);
+void CNN::gradDec(float alpha) {
+	C.gradDec(alpha);
+
+	MUL(dW, alpha, dW);
+	MUL(dB, alpha, dB);
 
 	SUB(W, W, dW);
 	SUB(B, B, dB);
 	
 	setZero(dW);
 	setZero(dB);
+}
+
+tensor1 CNN::predict(tensor3& x) {
+	tensor1 out(C.getOutDim(), 0);
+
+	forward(x);
+
+	out[C.getOutputClass()] = 1.0;
+
+	return out;
 }

@@ -19,11 +19,11 @@ protected:
 
 	int N = 0; // Number of Matrices (layers - 1)
 
-	double(*act)(double) = reLu;    // activation function
-	double(*out)(double) = sigmoid; // output function
+	float(*act)(float) = reLu;    // activation function
+	float(*out)(float) = sigmoid; // output function
 
-	double(*actPrime)(double) = reLuPrime; 
-	double(*outPrime)(double) = sigmoidPrime;
+	float(*actPrime)(float) = reLuPrime; 
+	float(*outPrime)(float) = sigmoidPrime;
 
 public:
 	Net();
@@ -36,7 +36,7 @@ public:
 	virtual void forward(Matrix& x);
 	virtual void backward(Matrix& y);
 
-	void gradDec(double alpha);
+	void gradDec(float alpha);
 	void printOutput();
 
 	int getInDim();
@@ -46,12 +46,13 @@ public:
 	void read(const char* file);
 	void write(const char* file);
 
+	int getOutputClass();
 	Matrix predict(Matrix& x);
 
-	static double reLu(double x);
-	static double reLuPrime(double x);
+	static float reLu(float x);
+	static float reLuPrime(float x);
 
-	static double sigmoid(double x);
-	static double sigmoidPrime(double x);
+	static float sigmoid(float x);
+	static float sigmoidPrime(float x);
 };
 

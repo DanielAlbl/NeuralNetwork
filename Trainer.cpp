@@ -11,7 +11,7 @@ Trainer::Trainer(Net& n)
 void Trainer::read(vector<Matrix>& v, const char * file, int size) {
 	ifstream fin(file, ios::in);
 	string line, num;
-	vector<double> tmp(size);
+	vector<float> tmp(size);
 
 	for (int i = 0; i < maxRows and getline(fin, line); i++) {
 		stringstream ss(line);
@@ -55,12 +55,12 @@ void Trainer::train(int epochs) {
 	}
 }
 
-double Trainer::test() {
+float Trainer::test() {
 	int cnt = 0;
 	for (int i = 0; i < testSize; i++) 
 		cnt += N.predict(Xtest[i]) == Ytest[i];
 			
-	return (double)cnt / (double)testSize;
+	return (float)cnt / (float)testSize;
 }
 
 void Trainer::standardizeTrain() {

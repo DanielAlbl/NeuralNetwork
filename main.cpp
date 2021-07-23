@@ -1,18 +1,11 @@
 #include "Trainer.h"
-#include "CNN.h"
-
-const int X_DIM = 4, Y_DIM = 3;
+#include "CNNTrainer.h"
 
 int main() {
-	CNN cnn({ 64,64,3 }, { 12,0,10,0,5,0 }, { 50,50,9 });
+	CNN cnn({ 28,28,1 }, { 16,0,16,0,16 }, { 50,50,10 });
+	CNNTrainer t(cnn);
 
-
-	//Classifier n({X_DIM,50,50,50,Y_DIM});
-	//Trainer t(n);
-
-	//t.readTraining("Data/xtrain.csv", "Data/ytrain.csv");
-	//t.readTesting("Data/xtest.csv", "Data/ytest.csv");
-
-	//t.train(10);
-	//cout << t.test() << endl;
+	t.readTrainFromDir("mnistJPG");
+	t.train(1);
+	t.testOnTrain();
 }

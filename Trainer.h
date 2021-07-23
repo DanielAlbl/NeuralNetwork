@@ -9,7 +9,7 @@ class Trainer {
 
 	vector<Matrix> Xtrain, Ytrain, Xtest, Ytest;
 	vector<int> order;
-	vector<double> mean, std;
+	vector<float> mean, std;
 
 	int trainSize = 0;
 	int testSize = 0;
@@ -18,7 +18,7 @@ class Trainer {
 
 	int inDim, outDim;
 
-	double stepSize = 0.1;
+	float stepSize = 0.1;
 
 	void initOrder();
 	void read(vector<Matrix>& v, const char * file, int size);
@@ -33,6 +33,6 @@ public:
 	void readTesting(const char* x, const char* y);
 
 	void train(int itr);
-	double test();
+	float test();
 };
 

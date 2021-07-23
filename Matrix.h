@@ -6,7 +6,7 @@
 using namespace std;
 
 class Matrix {
-    vector<vector<double>> elements;
+    vector<vector<float>> elements;
 
 public:
     int M, N;
@@ -14,19 +14,19 @@ public:
     Matrix(int size);
     Matrix(int m, int n);
     Matrix(ifstream& fin, int m, int n);
-    Matrix(vector<double> const& v);
-    Matrix(vector<vector<double>> const& v);
+    Matrix(vector<float> const& v);
+    Matrix(vector<vector<float>> const& v);
     ~Matrix() {}
 
     void init(int m, int n);
     void setZero();
-    void applyAct(double(*act)(double));
+    void applyAct(float(*act)(float));
     void print();
 
     void read(ifstream& fin, int m, int n);
     void write(ofstream& fout);
 
-    double& operator()(int i, int j);
+    float& operator()(int i, int j);
     Matrix& operator=(Matrix const& right);
     bool operator==(Matrix const& right);
 
@@ -40,7 +40,7 @@ public:
     static void SUB(Matrix& dif, Matrix& left, Matrix& right);
 
     static void MUL(Matrix& prod, Matrix& left, Matrix& right); // Matrix Multiply
-    static void MUL(double s, Matrix& m); // Scalar Multiply
+    static void MUL(float s, Matrix& m); // Scalar Multiply
     static void MLA(Matrix& ans, Matrix& left, Matrix& right, Matrix& acc); // Multiply Accumulate
 
     static void HAD(Matrix& prod, Matrix& left, Matrix& right); // Hadamard Product
@@ -50,6 +50,6 @@ public:
     static void OUT(Matrix& prod, Matrix& left, Matrix& right); // Outer Product
     static void OTA(Matrix& prod, Matrix& left, Matrix& right, Matrix& acc); // Outer Product Accumulate
 
-    static void ACT(double(*f)(double), Matrix& y, Matrix& x); // Action aka perform function elementwise
+    static void ACT(float(*f)(float), Matrix& y, Matrix& x); // Action aka perform function elementwise
 };
 
